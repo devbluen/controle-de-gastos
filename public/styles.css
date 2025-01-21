@@ -1,0 +1,22 @@
+
+/* Estilos específicos para campos no modo dark */
+body.bg-dark .form-control, 
+body.bg-dark .form-select {
+    background-color: #333333; /* Fundo escuro */
+    color: #ffffff; /* Texto claro */
+    border-color: #555555; /* Bordas escuras */
+}
+
+body.bg-dark .form-control::placeholder, 
+body.bg-dark .form-select::placeholder {
+    color: #cccccc; /* Texto do placeholder */
+}
+
+body.bg-light .detalhes-ganhos {
+    color: #333333;
+}
+
+/* Modo escuro */
+body.bg-dark .detalhes-ganhos {
+    color: #ffffff; /* Texto claro no modo escuro */
+}
