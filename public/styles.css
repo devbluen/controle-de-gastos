@@ -20,3 +20,16 @@ body.bg-light .detalhes-ganhos {
 body.bg-dark .detalhes-ganhos {
     color: #ffffff; /* Texto claro no modo escuro */
 }
+
+/* Modo claro (padrão) */
+.card {
+    background-color: #ffffff;
+    color: #333333;
+}
+
+/* Modo escuro */
+body.bg-dark .card {
+    background-color: #1e1e1e; /* Fundo escuro */
+    color: #e0e0e0; /* Texto claro */
+    border: 1px solid #444444; /* Bordas mais escuras */
+}

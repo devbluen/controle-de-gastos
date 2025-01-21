@@ -208,120 +208,146 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        const ctx = document.getElementById('graficoGastos').getContext('2d');
-        const estatisticas = <%- JSON.stringify(estatisticas) %>; // Estatísticas do backend
-        const periodos = Object.keys(estatisticas); // Períodos disponíveis
-        const valoresGastos = periodos.map(p => estatisticas[p].saida); // Gastos (saídas)
-        const valoresSaldo = periodos.map(p => estatisticas[p].entrada - estatisticas[p].saida); // Saldos restantes
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleDarkMode = document.getElementById('toggle-dark-mode');
+            const ctx = document.getElementById('graficoGastos').getContext('2d');
+            let chart = null;
 
-        const getChartColors = () => {
-            if (document.body.classList.contains('bg-dark')) {
+            // Dados do gráfico
+            const estatisticas = <%- JSON.stringify(estatisticas) %>;
+            const periodos = Object.keys(estatisticas); // Períodos disponíveis
+            const valoresGastos = periodos.map(p => estatisticas[p].saida); // Gastos (saídas)
+            const valoresSaldo = periodos.map(p => estatisticas[p].entrada - estatisticas[p].saida); // Saldos restantes
+
+            // Função para definir as cores do gráfico com base no tema
+            const getChartColors = () => {
+                if (document.body.classList.contains('bg-dark')) {
+                    return {
+                        background: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
+                        border: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
+                        text: '#ffffff', // Texto claro no modo dark
+                        grid: '#555555'  // Grade escura
+                    };
+                }
                 return {
                     background: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
                     border: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
-                    text: '#ffffff',
-                    grid: '#555555'
+                    text: '#000000', // Texto escuro no modo light
+                    grid: '#cccccc'  // Grade clara
                 };
-            }
-            return {
-                background: ['rgba(255, 99, 132, 0.2)', 'rgba(75, 192, 192, 0.2)'],
-                border: ['rgba(255, 99, 132, 1)', 'rgba(75, 192, 192, 1)'],
-                text: '#000000',
-                grid: '#cccccc'
             };
-        };
 
-        const renderChart = () => {
-            const colors = getChartColors();
-            return new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: periodos,
-                    datasets: [
-                        {
-                            label: 'Gastos (Saídas)',
-                            data: valoresGastos,
-                            backgroundColor: colors.background[0],
-                            borderColor: colors.border[0],
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Saldo Restante',
-                            data: valoresSaldo,
-                            backgroundColor: colors.background[1],
-                            borderColor: colors.border[1],
-                            borderWidth: 1
-                        }
-                    ]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: colors.grid
+            // Função para renderizar o gráfico
+            const renderChart = () => {
+                const colors = getChartColors();
+                if (chart) {
+                    chart.destroy(); // Destroi o gráfico atual antes de recriar
+                }
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: periodos,
+                        datasets: [
+                            {
+                                label: 'Gastos (Saídas)',
+                                data: valoresGastos,
+                                backgroundColor: colors.background[0],
+                                borderColor: colors.border[0],
+                                borderWidth: 1
                             },
-                            ticks: {
-                                color: colors.text
+                            {
+                                label: 'Saldo Restante',
+                                data: valoresSaldo,
+                                backgroundColor: colors.background[1],
+                                borderColor: colors.border[1],
+                                borderWidth: 1
                             }
-                        },
-                        x: {
-                            grid: {
-                                color: colors.grid
-                            },
-                            ticks: {
-                                color: colors.text
-                            }
-                        }
+                        ]
                     },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: colors.text
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: colors.grid // Cor da grade
+                                },
+                                ticks: {
+                                    color: colors.text // Cor dos textos no eixo Y
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: colors.grid // Cor da grade
+                                },
+                                ticks: {
+                                    color: colors.text // Cor dos textos no eixo X
+                                }
                             }
                         },
-                        title: {
-                            display: true,
-                            text: 'Gastos e Saldo por Período',
-                            color: colors.text
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: colors.text // Cor do texto da legenda
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Gastos e Saldo por Período',
+                                color: colors.text // Cor do título
+                            }
                         }
                     }
-                }
-            });
-        };
+                });
+            };
 
-        let chart = renderChart();
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleDarkMode = document.getElementById('toggle-dark-mode');
-
+            // Aplicar tema no carregamento com base na preferência salva
             if (localStorage.getItem('darkMode') === 'enabled') {
                 ativarModoEscuro();
+            } else {
+                desativarModoEscuro();
             }
 
+            // Renderiza o gráfico inicial
+            renderChart();
+
+            // Alternar entre os modos claro e escuro
             toggleDarkMode.addEventListener('click', () => {
                 if (document.body.classList.contains('bg-dark')) {
                     desativarModoEscuro();
                 } else {
                     ativarModoEscuro();
                 }
-                chart.destroy();
-                chart = renderChart();
+                renderChart(); // Recria o gráfico com as novas cores
             });
 
             function ativarModoEscuro() {
                 document.body.classList.add('bg-dark', 'text-light');
                 document.body.classList.remove('bg-light', 'text-dark');
+
+                // Atualizar todos os cards
+                document.querySelectorAll('.card').forEach(card => {
+                    card.classList.add('bg-dark', 'text-light');
+                    card.classList.remove('bg-light', 'text-dark');
+                });
+
                 localStorage.setItem('darkMode', 'enabled');
             }
 
             function desativarModoEscuro() {
                 document.body.classList.add('bg-light', 'text-dark');
                 document.body.classList.remove('bg-dark', 'text-light');
+
+                // Atualizar todos os cards
+                document.querySelectorAll('.card').forEach(card => {
+                    card.classList.add('bg-light', 'text-dark');
+                    card.classList.remove('bg-dark', 'text-light');
+                });
+
                 localStorage.setItem('darkMode', 'disabled');
             }
         });
+
     </script>
 
 </body>
