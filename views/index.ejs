@@ -149,7 +149,7 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                 <h3>Detalhes dos Gastos</h3>
-                <table class="table table-striped table-bordered">
+                <table class="table table-bordered table-hover">
                     <thead class="table-dark">
                         <tr>
                             <th>Data</th>
@@ -181,6 +181,7 @@
                         <% }) %>
                     </tbody>
                 </table>
+                
             </div>
         </div>
 
@@ -286,14 +287,14 @@
                         },
                         plugins: {
                             legend: {
-                                position: 'top',
+                                position: 'left',
                                 labels: {
                                     color: colors.text // Cor do texto da legenda
                                 }
                             },
                             title: {
                                 display: true,
-                                text: 'Gastos e Saldo por Período',
+                                text: 'Gastos',
                                 color: colors.text // Cor do título
                             }
                         }
@@ -325,10 +326,22 @@
                 document.body.classList.add('bg-dark', 'text-light');
                 document.body.classList.remove('bg-light', 'text-dark');
 
+                // Alterar o <thead> da tabela
+                document.querySelectorAll('.table thead').forEach(thead => {
+                    thead.classList.add('table-dark');
+                    thead.classList.remove('table-light');
+                });
+
                 // Atualizar todos os cards
                 document.querySelectorAll('.card').forEach(card => {
                     card.classList.add('bg-dark', 'text-light');
                     card.classList.remove('bg-light', 'text-dark');
+                });
+
+                // Atualizar as linhas da tabela
+                document.querySelectorAll('.table tr').forEach(row => {
+                    row.classList.add('text-light');
+                    row.classList.remove('text-dark');
                 });
 
                 localStorage.setItem('darkMode', 'enabled');
@@ -338,10 +351,22 @@
                 document.body.classList.add('bg-light', 'text-dark');
                 document.body.classList.remove('bg-dark', 'text-light');
 
+                // Alterar o <thead> da tabela
+                document.querySelectorAll('.table thead').forEach(thead => {
+                    thead.classList.add('table-light');
+                    thead.classList.remove('table-dark');
+                });
+
                 // Atualizar todos os cards
                 document.querySelectorAll('.card').forEach(card => {
                     card.classList.add('bg-light', 'text-dark');
                     card.classList.remove('bg-dark', 'text-light');
+                });
+
+                // Atualizar as linhas da tabela
+                document.querySelectorAll('.table tr').forEach(row => {
+                    row.classList.add('text-dark');
+                    row.classList.remove('text-light');
                 });
 
                 localStorage.setItem('darkMode', 'disabled');
